@@ -17,9 +17,9 @@ def logmobiledetector(ip, payload, useragent):
 def index():
     return render_template('index.php'), 200
 
-@app.route('/searchreplacedb2.php')
+@app.route('/searchreplacedb2.php', methods=['GET', 'POST'])
 def searchreplacedb2():
-    return '', 200
+    return render_template('searchreplacedb2.php'), 200
 
 # Detecting dirlisting for uploads
 @app.route('/wp-content/uploads/')
