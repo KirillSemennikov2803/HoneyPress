@@ -1,8 +1,8 @@
 # HoneyPress - WordPress honeypot
 WordPress honeypot in a docker container
 
-## First payload
-[https://gist.github.com/dustyfresh/42551964a91e2cac4c0f39a2a3e2e372](https://gist.github.com/dustyfresh/42551964a91e2cac4c0f39a2a3e2e372)
+## Payloads
+- [https://gist.github.com/dustyfresh/42551964a91e2cac4c0f39a2a3e2e372](https://gist.github.com/dustyfresh/42551964a91e2cac4c0f39a2a3e2e372)
 
 ## Update:
 I have began a complete re-write / re-implementation of this idea. Decided it would be best to go with good ol' Flask and python for creating a "WordPress" install. Because of Flask's flexibility and Python's modularity there are all kinds of fun to be had.
