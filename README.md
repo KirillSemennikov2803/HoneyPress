@@ -15,7 +15,7 @@ $ cd HoneyPress && docker build --rm -t honeypress .
 
 ## Start HoneyPress
 ```
-$ docker run -d --name HoneyPress -p 80:80
+$ docker run -d --name honeypress -p 80:80 honeypress
 ```
 
 
@@ -48,9 +48,9 @@ $ docker exec honeypress bash -c 'tail /opt/honeypress/logs/auth.log'
 ## ToDo
 - Log shipping (prolly will just use rsyslog / S3)
 - Bake in notifications (SMS & email)
-- Capture *all* POST/GET payload data into a log to be looked at later by an analyst.
+- ~~Capture *all* POST/GET payload data into a log to be looked at later by an analyst.~~
 - Figure out a way to introduce fake **MySQL** for SQLi analysis and payload capture
-- TCP dump analysis
+- TCP dump analysis / snort support?
 - Access log monitoring (look for things like sql injections, LFI/RFI, XSS, etc)
 - Modular vulnerabilities. Need to make it easier to fake a new vulnerability so scanners think they're exploiting a live target
 - Tor detection
@@ -58,3 +58,4 @@ $ docker exec honeypress bash -c 'tail /opt/honeypress/logs/auth.log'
 - Do some benchmarking.. is nginx needed?
 - Some gangster-ish browser fingerprinting (that supports Tor browsers too)
 - SLAP SOME GRAPHS ON THIS SHIT
+- create a cluster management toolchain with AWS/digitalocean support?

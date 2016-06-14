@@ -5,6 +5,7 @@ from datetime import datetime
 app = Flask(__name__)
 app.secret_key = ''
 
+## Logging functions
 def loginattempt(ip,user,passwd,useragent):
     with open("/opt/honeypress/logs/auth.log", "a") as log:
         log.write('[{}] - {} - user: {} pass: {} - {}\n\n\n'.format(str(datetime.now()),ip,user,passwd, useragent))
@@ -13,6 +14,11 @@ def logmobiledetector(ip, payload, useragent):
     with open("/opt/honeypress/logs/mobiledetector.log", "a") as log:
         log.write('[{}] - {} - {} - Payload:src={}\n'.format(str(datetime.now()), ip, useragent, payload))
 
+def logPOST(ip, payload, useragent):
+    with open("/opt/honeypress/logs/payloads.log", "a") as log:
+        log.write('[{}] - {} - {} - Payload:\n{}\n'.format(str(datetime.now()), ip, useragent, payload))
+
+## Start of routes
 @app.route('/')
 def index():
     return render_template('index.php'), 200
@@ -105,10 +111,17 @@ def wpmobiledetectorreadme():
 
 @app.route('/robots.txt')
 def robots():
-    return '''User-agent: *
-Disallow: /wp-admin/
-Allow: /wp-admin/admin-ajax.php
+    return '''User-agent: *\n
+Disallow: /wp-admin/\n
+Allow: /wp-admin/admin-ajax.php\n
 ''', 200
+
+# If it's a 404 log the POST data to a file then return 200 status code
+@app.errorhandler(404)
+def not_found(e):
+    if request.method == 'POST':
+        logPOST(request.remote_addr, request.form, request.headers.get('User-Agent'))
+    return '', 200
 
 @app.after_request
 def apply_caching(response):
