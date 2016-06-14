@@ -123,6 +123,11 @@ def not_found(e):
         logPOST(request.remote_addr, request.form, request.headers.get('User-Agent'))
     return '', 200
 
+@app.errorhandler(400)
+def bad_req(e):
+    print("ERROR: {}".format(e))
+    return '', 200
+
 @app.after_request
 def apply_caching(response):
     response.headers["Server"] = "nginx"
