@@ -1,9 +1,39 @@
 #!/usr/bin/env python
 from flask import Flask, render_template, redirect, url_for, request
+from werkzeug.wsgi import LimitedStream
 from datetime import datetime
+from pymongo import MongoClient
+import json
+
+
+def ConnectMongo():
+    global mongo
+    mongo = MongoClient()
+    global honeyDB
+    honeyDB = mongo.honey
 
 app = Flask(__name__)
 app.secret_key = ''
+
+# connection reset fix
+# see: http://flask.pocoo.org/snippets/47/
+class StreamConsumingMiddleware(object):
+    def __init__(self, app):
+        self.app = app
+
+    def __call__(self, environ, start_response):
+        stream = LimitedStream(environ['wsgi.input'],
+                               int(environ['CONTENT_LENGTH'] or 0))
+        environ['wsgi.input'] = stream
+        app_iter = self.app(environ, start_response)
+        try:
+            stream.exhaust()
+            for event in app_iter:
+                yield event
+        finally:
+            if hasattr(app_iter, 'close'):
+                app_iter.close()
+app.wsgi_app = StreamConsumingMiddleware(app.wsgi_app)
 
 ## Logging functions
 def loginattempt(ip,user,passwd,useragent):
@@ -14,9 +44,11 @@ def logmobiledetector(ip, payload, useragent):
     with open("/opt/honeypress/logs/mobiledetector.log", "a") as log:
         log.write('[{}] - {} - {} - Payload:src={}\n'.format(str(datetime.now()), ip, useragent, payload))
 
-def logPOST(ip, payload, useragent):
-    with open("/opt/honeypress/logs/payloads.log", "a") as log:
-        log.write('[{}] - {} - {} - Payload:\n{}\n'.format(str(datetime.now()), ip, useragent, payload))
+def logPOST(ip, payload, useragent, payload_type):
+    ConnectMongo()
+    print('{}\n{}'.format(mongo, honeyDB))
+    honeyDB.payloads.insert({'ip': '{}'.format(ip), 'user-agent': '{}'.format(useragent), 'payload': payload}, check_keys=False)
+    mongo.close()
 
 ## Start of routes
 @app.route('/')
@@ -129,7 +161,7 @@ def bad_req(e):
     return '', 200
 
 @app.after_request
-def apply_caching(response):
+def apply_headers(response):
     response.headers["Server"] = "nginx"
     response.headers["Content-Type"] = "text/html; charset=UTF-8"
     response.headers["Connection"] = "keep-alive"
