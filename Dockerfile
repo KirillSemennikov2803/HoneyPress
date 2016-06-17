@@ -1,7 +1,6 @@
 FROM debian:jessie
 MAINTAINER dustyfresh, https://github.com/dustyfresh
-RUN apt-get update && apt-get install --yes vim less build-essential python-setuptools python-pip supervisor curl mongodb-server
-RUN pip install flask
+RUN apt-get update && apt-get install --yes vim less build-essential python-setuptools python-pip python-dev supervisor curl mongodb-server libgeoip1 libgeoip-dev
 RUN mkdir -pv /data/db /opt/honeypress/logs
 RUN ln -s /data/db /opt/honeypress/db
 ADD src/templates /opt/honeypress/templates

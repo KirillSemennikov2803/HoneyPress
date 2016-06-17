@@ -3,8 +3,20 @@ from flask import Flask, render_template, redirect, url_for, request
 from werkzeug.wsgi import LimitedStream
 from datetime import datetime
 from pymongo import MongoClient
+import hashlib
 import json
+import re
+import requests
+import time
 
+def checkTor(ip):
+	headers = {'user-agent': 'honeypress/1.3.3.7 (https://github.com/dustyfresh/HoneyPress)'}
+	exit_nodes = requests.get('https://check.torproject.org/exit-addresses', headers=headers)
+	exit_nodes = exit_nodes.text
+	if re.search(ip, exit_nodes):
+		return True
+	else:
+		return False
 
 def ConnectMongo():
     global mongo
@@ -40,14 +52,14 @@ def loginattempt(ip,user,passwd,useragent):
     with open("/opt/honeypress/logs/auth.log", "a") as log:
         log.write('[{}] - {} - user: {} pass: {} - {}\n\n\n'.format(str(datetime.now()),ip,user,passwd, useragent))
 
-def logmobiledetector(ip, payload, useragent):
-    with open("/opt/honeypress/logs/mobiledetector.log", "a") as log:
-        log.write('[{}] - {} - {} - Payload:src={}\n'.format(str(datetime.now()), ip, useragent, payload))
-
-def logPOST(ip, payload, useragent, payload_type):
+def logPOST(ip,useragent,isTor,triggered_url,payload,payload_hash):
     ConnectMongo()
-    print('{}\n{}'.format(mongo, honeyDB))
-    honeyDB.payloads.insert({'ip': '{}'.format(ip), 'user-agent': '{}'.format(useragent), 'payload': payload}, check_keys=False)
+    honeyDB.payloads.insert({'ip': '{}'.format(ip),
+    'time': '{}'.format(int(time.time())),
+    'user-agent': '{}'.format(useragent),
+    'Tor': isTor,
+    'triggered_url': '{}'.format(triggered_url),
+    'payload': {'hash': '{}'.format(payload_hash), 'data': payload}}, check_keys=False)
     mongo.close()
 
 ## Start of routes
@@ -124,35 +136,15 @@ def wplogin():
         return render_template('wp-login.php'), 200
     return render_template('wp-login.php'), 200
 
-# Reference: https://blog.sucuri.net/2016/06/wp-mobile-detector-vulnerability-being-exploited-in-the-wild.html
-@app.route('/wp-content/plugins/wp-mobile-detector/', methods=['GET', 'POST'])
-def wpmobiledetectorslash():
-    return '', 200
-
-@app.route('/wp-content/plugins/wp-mobile-detector/resize.php', methods=['GET', 'POST'])
-def wpmobiledetector():
-    if request.method == 'POST':
-        if request.form['src']:
-            logmobiledetector(request.remote_addr, request.form['src'], request.headers.get('User-Agent'))
-    return '', 200
-
-@app.route('/wp-content/plugins/wp-mobile-detector/readme.txt', methods=['GET', 'POST'])
-def wpmobiledetectorreadme():
-    return '', 200
-
-
 @app.route('/robots.txt')
 def robots():
-    return '''User-agent: *\n
-Disallow: /wp-admin/\n
-Allow: /wp-admin/admin-ajax.php\n
-''', 200
+    return '', 200
 
 # If it's a 404 log the POST data to a file then return 200 status code
 @app.errorhandler(404)
 def not_found(e):
     if request.method == 'POST':
-        logPOST(request.remote_addr, request.form, request.headers.get('User-Agent'))
+        logPOST(request.remote_addr, request.headers.get('User-Agent'), checkTor(request.remote_addr), request.url, request.form, hashlib.sha256(u'{}'.format(request.form)).hexdigest())
     return '', 200
 
 @app.errorhandler(400)
