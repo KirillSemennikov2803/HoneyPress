@@ -54,7 +54,7 @@ $ docker exec honeypress bash -c 'tail /opt/honeypress/logs/auth.log'
 - Figure out a way to introduce fake **MySQL** for SQLi analysis and payload capture
 - TCP dump analysis / snort support?
 - Access log monitoring (look for things like sql injections, LFI/RFI, XSS, etc)
-- Tor detection
+- ~~Tor detection~~
 - ~~Database of some sort.. haven't decided if I should go with MongoDB or just use sqlite. Not sure about performance yet.~~
 - Using MongoDB as the database backend. Should make it so that if environment variables are defined for a mongo server we will send data there instead
 - ~~Do some benchmarking.. is nginx needed?~~ (decided that Nginx isn't needed if running Flask with threads for our purposes)
