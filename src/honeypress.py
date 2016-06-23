@@ -10,7 +10,7 @@ import requests
 import time
 
 def checkTor(ip):
-	headers = {'user-agent': 'honeypress/1.3.3.7 (https://github.com/dustyfresh/HoneyPress)'}
+	headers = {'user-agent': 'honeypress/(https://github.com/dustyfresh/HoneyPress)'}
 	exit_nodes = requests.get('https://check.torproject.org/exit-addresses', headers=headers)
 	exit_nodes = exit_nodes.text
 	if re.search(ip, exit_nodes):
@@ -63,57 +63,45 @@ def logPOST(ip,useragent,isTor,triggered_url,payload,payload_hash):
     mongo.close()
 
 ## Start of routes
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def index():
-    return render_template('index.php'), 200
+	if request.method == 'POST':
+		logPOST(request.remote_addr, request.headers.get('User-Agent'), checkTor(request.remote_addr), request.url, request.form, hashlib.sha256(u'{}'.format(request.form)).hexdigest())
+	return render_template('index.php'), 200
 
 @app.route('/searchreplacedb2.php', methods=['GET', 'POST'])
 def searchreplacedb2():
-    return render_template('searchreplacedb2.php'), 200
-
-# Detecting dirlisting for uploads
-@app.route('/wp-content/uploads/')
-def uploadsdirlisting():
-    return 'index of /', 200
+	if request.method == 'POST':
+		logPOST(request.remote_addr, request.headers.get('User-Agent'), checkTor(request.remote_addr), request.url, request.form, hashlib.sha256(u'{}'.format(request.form)).hexdigest())
+	return render_template('searchreplacedb2.php'), 200
 
 @app.route('/wp-content/debug.log')
 def debuglog():
     return 'aaa', 200
 
-@app.route('/wp-admin/admin-ajax.php')
+@app.route('/wp-admin/admin-ajax.php', methods=['GET', 'POST'])
 def adminajaxphp():
-    return '0', 200
+	if request.method == 'POST':
+		logPOST(request.remote_addr, request.headers.get('User-Agent'), checkTor(request.remote_addr), request.url, request.form, hashlib.sha256(u'{}'.format(request.form)).hexdigest())
+	return '0', 200
 
 @app.route('/xmlrpc.php', methods=['GET', 'POST'])
 def xmlrpc():
     if request.method == 'GET':
         return 'XML-RPC server accepts POST requests only.', 405
     elif request.method == 'POST':
-        return '', 403
+		logPOST(request.remote_addr, request.headers.get('User-Agent'), checkTor(request.remote_addr), request.url, request.form, hashlib.sha256(u'{}'.format(request.form)).hexdigest())
+		return '', 200
 
 @app.route('/readme.html')
 def readme():
     return render_template('readme.html'), 200
 
-@app.route('/wp-config.php')
+@app.route('/wp-config.php', methods=['GET', 'POST'])
 def wpconfig():
-    return '', 200
-
-@app.route('/wp-content')
-def wpcontent():
-    return '', 200
-
-@app.route('/wp-content/themes')
-def wpcontentthemes():
-    return '', 200
-
-@app.route('/wp-content/plugins')
-def wpcontentplugins():
-    return '', 200
-
-@app.route('/wp-content/uploads')
-def uploads():
-    return '', 200
+	if request.method == 'POST':
+		logPOST(request.remote_addr, request.headers.get('User-Agent'), checkTor(request.remote_addr), request.url, request.form, hashlib.sha256(u'{}'.format(request.form)).hexdigest())
+	return '', 200
 
 @app.route('/wp-admin')
 def wpadmin():
@@ -129,16 +117,7 @@ def wplogin():
         username = request.form['log']
         password = request.form['pwd']
         loginattempt(request.remote_addr,username,password,request.headers.get('User-Agent'))
-        if username == 'admin' and password == 'admin':
-            return 'username and password are both admin. Likely a bot trying to use default login details or brute force.', 200
-        elif username == 'admin' and password == 'password':
-            return 'username and password are admin:password. Likely a bot trying to use default login details or brute force.', 200
-        return render_template('wp-login.php'), 200
     return render_template('wp-login.php'), 200
-
-@app.route('/robots.txt')
-def robots():
-    return '', 200
 
 # If it's a 404 log the POST data to a file then return 200 status code
 @app.errorhandler(404)
