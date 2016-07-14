@@ -24,7 +24,7 @@ $ docker run -d --name honeypress -p 80:80 honeypress
 ## Logs
 You can view access logs easily:
 ```
-$ docker exec honeypress bash -c 'tail /opt/honeypress/logs/access.log'
+$ docker exec honeypress bash -c 'tail /opt/honeypress/logs/honey.log'
 
 192.168.99.1 - - [06/Jun/2016 03:21:41] "GET /wp-login.php?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1" 200 -
 192.168.99.1 - - [06/Jun/2016 03:21:41] "GET /wp-login.php?__debugger__=yes&cmd=resource&f=jquery.js HTTP/1.1" 200 -
@@ -66,7 +66,6 @@ $ docker exec honeypress bash -c 'tail /opt/honeypress/logs/auth.log'
 
 ## Database queries
 More documentation coming soon!
-
 
 #### Finding payloads that are not equal to the hashes in this list:
 ```javascript
