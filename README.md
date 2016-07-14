@@ -63,3 +63,37 @@ $ docker exec honeypress bash -c 'tail /opt/honeypress/logs/auth.log'
 - GUI or what? SLAP SOME GRAPHS ON THIS SHIT. And a cool search box.
 - Should honeypress integrate with cloud vendors APIs for rapid deployment / [Kubernetes](http://kubernetes.io/) support ?
 - Bake in "mirroring" capabilities. This will allow a honeypot to mirror a live site.
+
+## Database queries
+More documentation coming soon!
+
+
+#### Finding payloads that are not equal to the hashes in this list:
+```javascript
+db.payloads.find({'payload.hash': {$nin: ['41f60189b27ae89fd883c78f9f01a793a77d7d4517adadc369373f86198b941a', 'e93f4e3a86193773f4b0e18d313645686a6d210cb73aabac172228d33a75c92b']}}, {'payload.data': 1}).pretty()
+```
+
+#### Finding payloads by hash:
+```javascript
+db.payloads.find({'payload.hash': '41f60189b27ae89fd883c78f9f01a793a77d7d4517adadc369373f86198b941a'}, {'_id': 0, 'ip': 1}).pretty()
+```
+
+#### Finding payloads by IP address:
+```javascript
+db.payloads.find({'ip': '187.161.157.180'}, {'payload.data': 1}).pretty()
+```
+
+#### Finding payloads by user-agent:
+```javascript
+db.payloads.find({'user-agent': 'Wget(linux)'}, {'payload.data': 1}).pretty()
+```
+
+#### Finding payloads by user-agent with regex:
+```javascript
+db.payloads.find({'user-agent': {$regex: /.*mozilla.*/, $options: 'si'}}, {'payload.data': 1}).pretty()
+```
+
+#### Finding payload commands with regex:
+```javascript
+db.payloads.find({'payload.data.cmd': {$regex: /.*ping.*/, $options: 'si'}}, {'payload.data': 1}).pretty()
+```
