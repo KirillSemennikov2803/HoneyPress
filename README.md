@@ -14,10 +14,10 @@ $ git clone https://github.com/dustyfresh/HoneyPress.git
 $ cd HoneyPress && docker-compose up -d
 ```
 
-## Logs
+## Nginx Logs
 You can view access logs easily:
 ```
-$ docker exec honeypress bash -c 'tail /opt/honeypress/logs/honey.log'
+$ docker exec honeypress bash -c 'tail /var/log/nginx/access.log'
 
 192.168.99.1 - - [06/Jun/2016 03:21:41] "GET /wp-login.php?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1" 200 -
 192.168.99.1 - - [06/Jun/2016 03:21:41] "GET /wp-login.php?__debugger__=yes&cmd=resource&f=jquery.js HTTP/1.1" 200 -
@@ -43,7 +43,7 @@ More documentation coming soon!
 
 ### Accessing the data
 ```
-$ docker exec -it honeypress mongo
+$ docker exec -it honeyDB mongo
 > use honey
 > db.payloads.count()
 ```
