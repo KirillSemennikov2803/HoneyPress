@@ -11,15 +11,8 @@ I have began a complete re-write / re-implementation of this idea. Decided it wo
 ## Clone and build Docker image
 ```
 $ git clone https://github.com/dustyfresh/HoneyPress.git
-$ cd HoneyPress && docker build --rm -t honeypress .
+$ cd HoneyPress && docker-compose up -d
 ```
-
-
-## Start HoneyPress
-```
-$ docker run -d --name honeypress -p 80:80 honeypress
-```
-
 
 ## Logs
 You can view access logs easily:
@@ -36,7 +29,6 @@ $ docker exec honeypress bash -c 'tail /opt/honeypress/logs/honey.log'
 192.168.99.1 - - [06/Jun/2016 03:21:46] "POST /wp-login.php HTTP/1.1" 200 -
 ```
 
-
 ### Password logging
 If you wanted to extract a list of passwords used in testing:
 ```
@@ -46,26 +38,15 @@ $ docker exec honeypress bash -c 'tail /opt/honeypress/logs/auth.log'
 46.0
 ```
 
-
-## ToDo
-- Log shipping (prolly will just use rsyslog / S3)
-- Bake in notifications (SMS & email / pagerduty)
-- ~~Capture *all* POST/GET payload data into a log to be looked at later by an analyst.~~
-- Figure out a way to introduce fake **MySQL** for SQLi analysis and payload capture
-- TCP dump analysis / snort support?
-- Access log monitoring (look for things like sql injections, LFI/RFI, XSS, etc)
-- ~~Tor detection~~
-- ~~Database of some sort.. haven't decided if I should go with MongoDB or just use sqlite. Not sure about performance yet.~~
-- Using MongoDB as the database backend. Should make it so that if environment variables are defined for a mongo server we will send data there instead
-- ~~Do some benchmarking.. is nginx needed?~~ (decided that Nginx isn't needed if running Flask with threads for our purposes)
-- Some gangster-ish browser fingerprinting (that supports Tor browsers too)
-- create a cluster management toolchain with AWS/digitalocean support?
-- GUI or what? SLAP SOME GRAPHS ON THIS SHIT. And a cool search box.
-- Should honeypress integrate with cloud vendors APIs for rapid deployment / [Kubernetes](http://kubernetes.io/) support ?
-- Bake in "mirroring" capabilities. This will allow a honeypot to mirror a live site.
-
 ## Database queries
 More documentation coming soon!
+
+### Accessing the data
+```
+$ docker exec -it honeypress mongo
+> use honey
+> db.payloads.count()
+```
 
 #### Finding payloads that are not equal to the hashes in this list:
 ```javascript

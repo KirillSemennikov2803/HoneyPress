@@ -20,32 +20,12 @@ def checkTor(ip):
 
 def ConnectMongo():
     global mongo
-    mongo = MongoClient()
+    mongo = MongoClient('mongo', 27017)
     global honeyDB
     honeyDB = mongo.honey
 
 app = Flask(__name__)
 app.secret_key = ''
-
-# connection reset fix
-# see: http://flask.pocoo.org/snippets/47/
-class StreamConsumingMiddleware(object):
-    def __init__(self, app):
-        self.app = app
-
-    def __call__(self, environ, start_response):
-        stream = LimitedStream(environ['wsgi.input'],
-                               int(environ['CONTENT_LENGTH'] or 0))
-        environ['wsgi.input'] = stream
-        app_iter = self.app(environ, start_response)
-        try:
-            stream.exhaust()
-            for event in app_iter:
-                yield event
-        finally:
-            if hasattr(app_iter, 'close'):
-                app_iter.close()
-app.wsgi_app = StreamConsumingMiddleware(app.wsgi_app)
 
 ## Logging functions
 def loginattempt(ip,user,passwd,useragent):
