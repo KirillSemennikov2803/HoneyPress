@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 from flask import Flask, render_template, redirect, url_for, request
 from werkzeug.wsgi import LimitedStream
 from datetime import datetime
@@ -24,8 +24,8 @@ def ConnectMongo():
     global honeyDB
     honeyDB = mongo.honey
 
-app = Flask(__name__)
-app.secret_key = ''
+application = Flask(__name__)
+application.secret_key = ''
 
 ## Logging functions
 def loginattempt(ip,user,passwd,useragent):
@@ -43,55 +43,55 @@ def logPOST(ip,useragent,isTor,triggered_url,payload,payload_hash):
     mongo.close()
 
 ## Start of routes
-@app.route('/', methods=['GET', 'POST'])
+@application.route('/', methods=['GET', 'POST'])
 def index():
 	if request.method == 'POST':
 		logPOST(request.remote_addr, request.headers.get('User-Agent'), checkTor(request.remote_addr), request.url, request.form, hashlib.sha256(u'{}'.format(request.form)).hexdigest())
 	return render_template('index.php'), 200
 
-@app.route('/searchreplacedb2.php', methods=['GET', 'POST'])
+@application.route('/searchreplacedb2.php', methods=['GET', 'POST'])
 def searchreplacedb2():
 	if request.method == 'POST':
 		logPOST(request.remote_addr, request.headers.get('User-Agent'), checkTor(request.remote_addr), request.url, request.form, hashlib.sha256(u'{}'.format(request.form)).hexdigest())
 	return render_template('searchreplacedb2.php'), 200
 
-@app.route('/wp-content/debug.log')
+@application.route('/wp-content/debug.log')
 def debuglog():
     return 'aaa', 200
 
-@app.route('/wp-admin/admin-ajax.php', methods=['GET', 'POST'])
+@application.route('/wp-admin/admin-ajax.php', methods=['GET', 'POST'])
 def adminajaxphp():
 	if request.method == 'POST':
 		logPOST(request.remote_addr, request.headers.get('User-Agent'), checkTor(request.remote_addr), request.url, request.form, hashlib.sha256(u'{}'.format(request.form)).hexdigest())
 	return '0', 200
 
-@app.route('/xmlrpc.php', methods=['GET', 'POST'])
+@application.route('/xmlrpc.php', methods=['GET', 'POST'])
 def xmlrpc():
-    if request.method == 'GET':
-        return 'XML-RPC server accepts POST requests only.', 405
-    elif request.method == 'POST':
+	if request.method == 'GET':
+		return 'XML-RPC server accepts POST requests only.', 405
+	elif request.method == 'POST':
 		logPOST(request.remote_addr, request.headers.get('User-Agent'), checkTor(request.remote_addr), request.url, request.form, hashlib.sha256(u'{}'.format(request.form)).hexdigest())
-		return '', 200
+	return '', 200
 
-@app.route('/readme.html')
+@application.route('/readme.html')
 def readme():
     return render_template('readme.html'), 200
 
-@app.route('/wp-config.php', methods=['GET', 'POST'])
+@application.route('/wp-config.php', methods=['GET', 'POST'])
 def wpconfig():
 	if request.method == 'POST':
 		logPOST(request.remote_addr, request.headers.get('User-Agent'), checkTor(request.remote_addr), request.url, request.form, hashlib.sha256(u'{}'.format(request.form)).hexdigest())
 	return '', 200
 
-@app.route('/wp-admin')
+@application.route('/wp-admin')
 def wpadmin():
     return redirect("/wp-login.php", code=302)
 
-@app.route('/wp-admin/')
+@application.route('/wp-admin/')
 def wpadminslash():
     return redirect("/wp-login.php", code=302)
 
-@app.route('/wp-login.php', methods=['GET', 'POST'])
+@application.route('/wp-login.php', methods=['GET', 'POST'])
 def wplogin():
     if request.method == 'POST':
         username = request.form['log']
@@ -100,18 +100,18 @@ def wplogin():
     return render_template('wp-login.php'), 200
 
 # If it's a 404 log the POST data to a file then return 200 status code
-@app.errorhandler(404)
+@application.errorhandler(404)
 def not_found(e):
     if request.method == 'POST':
         logPOST(request.remote_addr, request.headers.get('User-Agent'), checkTor(request.remote_addr), request.url, request.form, hashlib.sha256(u'{}'.format(request.form)).hexdigest())
     return '', 200
 
-@app.errorhandler(400)
+@application.errorhandler(400)
 def bad_req(e):
     print("ERROR: {}".format(e))
     return '', 200
 
-@app.after_request
+@application.after_request
 def apply_headers(response):
     response.headers["Server"] = "nginx"
     response.headers["Content-Type"] = "text/html; charset=UTF-8"
@@ -122,4 +122,4 @@ def apply_headers(response):
     return response
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=80, debug=True, threaded=True)
+    application.run(host='0.0.0.0', port=8080, debug=True, threaded=True)

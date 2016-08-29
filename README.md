@@ -43,7 +43,7 @@ More documentation coming soon!
 
 ### Accessing the data
 ```
-$ docker exec -it honeyDB mongo
+$ docker exec -it honeypress mongo
 > use honey
 > db.payloads.count()
 ```

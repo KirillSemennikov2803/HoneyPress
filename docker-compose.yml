@@ -5,9 +5,10 @@ services:
     image: mongo
   honeypress:
     container_name: honeypress
-    build: .
+    build: ./honeypress/
     ports:
       - '80:80'
+      - '8080'
     depends_on:
       - mongo
     links:
