@@ -11,12 +11,15 @@ import time
 
 def checkTor(ip):
 	headers = {'user-agent': 'honeypress/(https://github.com/dustyfresh/HoneyPress)'}
-	exit_nodes = requests.get('https://check.torproject.org/exit-addresses', headers=headers)
-	exit_nodes = exit_nodes.text
-	if re.search(ip, exit_nodes):
-		return True
-	else:
-		return False
+	try:
+		exit_nodes = requests.get('https://check.torproject.org/exit-addresses', headers=headers)
+		exit_nodes = exit_nodes.text
+		if re.search(ip, exit_nodes):
+			return True
+		else:
+			return False
+	except Exception as err:
+		return "err"
 
 def ConnectMongo():
     global mongo
@@ -32,27 +35,27 @@ def loginattempt(ip,user,passwd,useragent):
     with open("/opt/honeypress/logs/auth.log", "a") as log:
         log.write('[{}] - {} - user: {} pass: {} - {}\n\n\n'.format(str(datetime.now()),ip,user,passwd, useragent))
 
-def logPOST(ip,useragent,isTor,triggered_url,payload,payload_hash):
+def logPOST(ip,useragent,isTor,triggered_url,payload):
     ConnectMongo()
     honeyDB.payloads.insert({'ip': '{}'.format(ip),
     'time': '{}'.format(int(time.time())),
     'user-agent': '{}'.format(useragent),
     'Tor': isTor,
     'triggered_url': '{}'.format(triggered_url),
-    'payload': {'hash': '{}'.format(payload_hash), 'data': payload}}, check_keys=False)
+    'payload': {'data': payload}}, check_keys=False)
     mongo.close()
 
 ## Start of routes
 @application.route('/', methods=['GET', 'POST'])
 def index():
 	if request.method == 'POST':
-		logPOST(request.remote_addr, request.headers.get('User-Agent'), checkTor(request.remote_addr), request.url, request.form, hashlib.sha256(u'{}'.format(request.form)).hexdigest())
+		logPOST(request.remote_addr, request.headers.get('User-Agent'), checkTor(request.remote_addr), request.url, request.form)
 	return render_template('index.php'), 200
 
 @application.route('/searchreplacedb2.php', methods=['GET', 'POST'])
 def searchreplacedb2():
 	if request.method == 'POST':
-		logPOST(request.remote_addr, request.headers.get('User-Agent'), checkTor(request.remote_addr), request.url, request.form, hashlib.sha256(u'{}'.format(request.form)).hexdigest())
+		logPOST(request.remote_addr, request.headers.get('User-Agent'), checkTor(request.remote_addr), request.url, request.form)
 	return render_template('searchreplacedb2.php'), 200
 
 @application.route('/wp-content/debug.log')
@@ -62,7 +65,7 @@ def debuglog():
 @application.route('/wp-admin/admin-ajax.php', methods=['GET', 'POST'])
 def adminajaxphp():
 	if request.method == 'POST':
-		logPOST(request.remote_addr, request.headers.get('User-Agent'), checkTor(request.remote_addr), request.url, request.form, hashlib.sha256(u'{}'.format(request.form)).hexdigest())
+		logPOST(request.remote_addr, request.headers.get('User-Agent'), checkTor(request.remote_addr), request.url, request.form)
 	return '0', 200
 
 @application.route('/xmlrpc.php', methods=['GET', 'POST'])
@@ -70,7 +73,7 @@ def xmlrpc():
 	if request.method == 'GET':
 		return 'XML-RPC server accepts POST requests only.', 405
 	elif request.method == 'POST':
-		logPOST(request.remote_addr, request.headers.get('User-Agent'), checkTor(request.remote_addr), request.url, request.form, hashlib.sha256(u'{}'.format(request.form)).hexdigest())
+		logPOST(request.remote_addr, request.headers.get('User-Agent'), checkTor(request.remote_addr), request.url, request.form)
 	return '', 200
 
 @application.route('/readme.html')
@@ -80,7 +83,7 @@ def readme():
 @application.route('/wp-config.php', methods=['GET', 'POST'])
 def wpconfig():
 	if request.method == 'POST':
-		logPOST(request.remote_addr, request.headers.get('User-Agent'), checkTor(request.remote_addr), request.url, request.form, hashlib.sha256(u'{}'.format(request.form)).hexdigest())
+		logPOST(request.remote_addr, request.headers.get('User-Agent'), checkTor(request.remote_addr), request.url, request.form)
 	return '', 200
 
 @application.route('/wp-admin')
@@ -103,7 +106,7 @@ def wplogin():
 @application.errorhandler(404)
 def not_found(e):
     if request.method == 'POST':
-        logPOST(request.remote_addr, request.headers.get('User-Agent'), checkTor(request.remote_addr), request.url, request.form, hashlib.sha256(u'{}'.format(request.form)).hexdigest())
+        logPOST(request.remote_addr, request.headers.get('User-Agent'), checkTor(request.remote_addr), request.url, request.form)
     return '', 200
 
 @application.errorhandler(400)

@@ -13,6 +13,5 @@ ADD src/templates /opt/honeypress/templates
 ADD conf/vhost.conf /etc/nginx/sites-enabled/default
 ADD conf/supervise-*.conf /etc/supervisor/conf.d/
 ADD src/* /opt/honeypress/
-ADD static /var/www/html/static
 RUN ln -s /var/log/nginx/access.log /opt/honeypress/logs/nginx_access.log && ln -s /var/log/nginx/error.log /opt/honeypress/logs/nginx_error.log
 CMD ["/usr/bin/supervisord", "-n"]
