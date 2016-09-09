@@ -3,3 +3,4 @@ pymongo
 geoip
 uwsgi
 requests
+haikunator

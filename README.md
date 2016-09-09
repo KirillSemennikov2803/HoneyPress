@@ -41,6 +41,11 @@ $ docker exec honeypress bash -c 'tail /opt/honeypress/logs/auth.log'
 ## Database queries
 More documentation coming soon!
 
+### Custom MongoDB database with authentication
+```
+$ docker run -d --name honeypress -p 80:80 -e 'MONGO_HOST=127.0.0.1' -e 'MONGO_PORT=27017' -e 'MONGO_USER=honeypress' -e 'MONGO_PASS=somethingsecure' honeypress
+```
+
 ### Accessing the data
 ```
 $ docker exec -it honeyDB mongo
@@ -48,7 +53,7 @@ $ docker exec -it honeyDB mongo
 > db.payloads.count()
 ```
 
-#### Finding payloads that are not equal to the hashes in this list:
+#### Finding payloads that are not equal to the hashes in this list (deprecated, more docs coming soon):
 ```javascript
 db.payloads.find({'payload.hash': {$nin: ['41f60189b27ae89fd883c78f9f01a793a77d7d4517adadc369373f86198b941a', 'e93f4e3a86193773f4b0e18d313645686a6d210cb73aabac172228d33a75c92b']}}, {'payload.data': 1}).pretty()
 ```
