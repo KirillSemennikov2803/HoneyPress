@@ -32,7 +32,9 @@ def checkTor(ip):
 def ConnectMongo():
 	global mongo
 	global honeyDB
+	global NODE_NAME
 	if os.getenv('MONGO_HOST') is not None:
+		NODE_NAME = os.getenv('NODE_NAME')
 		MONGO_HOST = os.getenv('MONGO_HOST')
 		MONGO_PORT = int(os.getenv('MONGO_PORT'))
 		MONGO_USER = os.getenv('MONGO_USER')
@@ -41,6 +43,7 @@ def ConnectMongo():
 		honeyDB = mongo.honey
 		honeyDB.authenticate(MONGO_USER, MONGO_PASS, source='admin')
 	else:
+		NODE_NAME = 'localhost'
 		mongo = MongoClient('mongo', MONGO_PORT)
 		honeyDB = mongo.honey
 
@@ -68,7 +71,7 @@ def logPOST(ip,useragent,isTor,triggered_url,payload):
 		honeyDB.payloads.insert({'ip': '{}'.format(ip),
 		'codename': '{}'.format(haikunator.haikunate(token_length=0)),
 		'Tor': isTor,
-		'requests': {request_id: {'user-agent': '{}'.format(useragent), 'attack_meta':analyze_uri(triggered_url), 'triggered_url': '{}'.format(triggered_url), 'time': '{}'.format(int(time.time())), 'data': payload}}}, check_keys=False)
+		'requests': {request_id: {'user-agent': '{}'.format(useragent), 'origin_node': NODE_NAME, 'attack_meta': analyze_uri(triggered_url), 'triggered_url': '{}'.format(triggered_url), 'time': '{}'.format(int(time.time())), 'data': payload}}}, check_keys=False)
 	else:
 		honeyDB.payloads.update_one({'ip': ip}, {'$push': {'requests.{}'.format(request_id): {'user-agent': '{}'.format(useragent), 'attack_meta':analyze_uri(triggered_url), 'triggered_url': '{}'.format(triggered_url), 'time': '{}'.format(int(time.time())), 'data': payload}}}, True)
 	mongo.close()
