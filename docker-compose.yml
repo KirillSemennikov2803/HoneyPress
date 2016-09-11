@@ -12,3 +12,12 @@ services:
       - mongo
     links:
       - mongo
+  dashboard:
+    container_name: dashboard
+    build: ./dashboard/
+    ports:
+      - '1337:1337'
+    depends_on:
+      - mongo
+    links:
+      - mongo
