@@ -52,7 +52,9 @@ def analyze_uri(uri):
 		target_type = 'theme'
 	elif 'wp-content/plugins/' in uri:
 		target_type = 'plugin'
-	elif 'wp-admin' or 'wp-login.php' in uri:
+	elif 'wp-admin' in uri:
+		target_type = 'wp-login'
+	elif 'wp-login.php' in uri:
 		target_type = 'wp-login'
 	else:
 		target_type = 'unknown'
