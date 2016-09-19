@@ -1,6 +1,6 @@
 ![HoneyPress](https://raw.githubusercontent.com/dustyfresh/HoneyPress/master/branding/bee-small.png)
-# HoneyPress - WordPress honeypot
-WordPress honeypot in a docker container
+# WordPress honeypot
+WordPress honeypot in a docker container.
 
 ## Payloads
 - [https://gist.github.com/dustyfresh/42551964a91e2cac4c0f39a2a3e2e372](https://gist.github.com/dustyfresh/42551964a91e2cac4c0f39a2a3e2e372)
