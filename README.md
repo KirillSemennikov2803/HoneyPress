@@ -1,13 +1,13 @@
 ![HoneyPress](https://raw.githubusercontent.com/dustyfresh/HoneyPress/master/branding/bee-small.png)
-# WordPress honeypot
-[HoneyPress](http://honeypress.org/), a WordPress honeypot in a docker container.
+
+# THIS PROJECT IS NO LONGER SUPPORTED OR IN ACTIVE DEVELOPMENT
+Hi! Thank you for taking interest in this project I had. Unfortunately, I haven't had time to maintain this project, therefore HoneyPress is no longer supported or in active development. If you would like to take ownership of this project I would be happy to contribute, or help you get familiar with it and share payloads I've logged. This project needs a lot of love. Since I've started HoneyPress a long time ago I wanted to support multiple versions of WordPress, so that means having to support new releases each time there is a WordPress core release. I've got some more ideas on how to make a project like this more efficient if you would like to adopt it. I'm leaving the repo READONLY so that others can see my approach to writing a WordPress honeypot with Flask and hopefully learn from it.  There are better ways to build something like this, so please learn from this. <3 HoneyPress
+
+## WordPress honeypot
+HoneyPress, a WordPress honeypot in a docker container.
 
 ## Payloads
 - [https://gist.github.com/dustyfresh/42551964a91e2cac4c0f39a2a3e2e372](https://gist.github.com/dustyfresh/42551964a91e2cac4c0f39a2a3e2e372)
-
-## Update:
-I have began a complete re-write / re-implementation of this idea. Decided it would be best to go with good ol' Flask and python for creating a "WordPress" install. Because of Flask's flexibility and Python's modularity there are all kinds of fun to be had.
-
 
 ## Clone and build Docker image
 ```
