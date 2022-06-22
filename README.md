@@ -1,8 +1,6 @@
 ![HoneyPress](https://raw.githubusercontent.com/dustyfresh/HoneyPress/master/branding/bee-small.png)
 
-# THIS PROJECT IS NO LONGER SUPPORTED OR IN ACTIVE DEVELOPMENT
-Hi! Thank you for taking interest in this project I had. Unfortunately, I haven't had time to maintain this project, therefore HoneyPress is no longer supported or in active development. If you would like to take ownership of this project I would be happy to contribute, or help you get familiar with it and share payloads I've logged. This project needs a lot of love. Since I've started HoneyPress a long time ago I wanted to support multiple versions of WordPress, so that means having to support new releases each time there is a WordPress core release. I've got some more ideas on how to make a project like this more efficient if you would like to adopt it. I'm leaving the repo READONLY so that others can see my approach to writing a WordPress honeypot with Flask and hopefully learn from it.  There are better ways to build something like this, so please learn from this. <3 HoneyPress
-
+# Проект переделан специально для диплома
 ## WordPress honeypot
 HoneyPress, a WordPress honeypot in a docker container.
 
@@ -20,14 +18,14 @@ You can view access logs easily:
 ```
 $ docker exec honeypress bash -c 'tail /var/log/nginx/access.log'
 
-192.168.99.1 - - [06/Jun/2016 03:21:41] "GET /wp-login.php?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1" 200 -
-192.168.99.1 - - [06/Jun/2016 03:21:41] "GET /wp-login.php?__debugger__=yes&cmd=resource&f=jquery.js HTTP/1.1" 200 -
-192.168.99.1 - - [06/Jun/2016 03:21:41] "GET /wp-login.php?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1" 200 -
-192.168.99.1 - - [06/Jun/2016 03:21:41] "GET /wp-login.php?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1" 200 -
-192.168.99.1 - - [06/Jun/2016 03:21:41] "GET /wp-login.php?__debugger__=yes&cmd=resource&f=ubuntu.ttf HTTP/1.1" 200 -
-192.168.99.1 - - [06/Jun/2016 03:21:41] "GET /wp-login.php?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1" 200 -
-192.168.99.1 - - [06/Jun/2016 03:21:44] "GET /wp-login.php HTTP/1.1" 200 -
-192.168.99.1 - - [06/Jun/2016 03:21:46] "POST /wp-login.php HTTP/1.1" 200 -
+192.168.99.1 - - [06/Jun/2022 03:21:41] "GET /wp-login.php?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1" 200 -
+192.168.99.1 - - [06/Jun/2022 03:21:41] "GET /wp-login.php?__debugger__=yes&cmd=resource&f=jquery.js HTTP/1.1" 200 -
+192.168.99.1 - - [06/Jun/2022 03:21:41] "GET /wp-login.php?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1" 200 -
+192.168.99.1 - - [06/Jun/2022 03:21:41] "GET /wp-login.php?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1" 200 -
+192.168.99.1 - - [06/Jun/2022 03:21:41] "GET /wp-login.php?__debugger__=yes&cmd=resource&f=ubuntu.ttf HTTP/1.1" 200 -
+192.168.99.1 - - [06/Jun/2022 03:21:41] "GET /wp-login.php?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1" 200 -
+192.168.99.1 - - [06/Jun/2022 03:21:44] "GET /wp-login.php HTTP/1.1" 200 -
+192.168.99.1 - - [06/Jun/2022 03:21:46] "POST /wp-login.php HTTP/1.1" 200 -
 ```
 
 ## Database queries
